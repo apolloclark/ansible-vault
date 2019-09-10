@@ -61,6 +61,12 @@
     - vault_install_remotely | bool
     - installation_required | bool
 
+- name: Fix permissions
+  file:
+    path: "{{ vault_bin_path }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+
 - name: Check Vault mlock capability
   become: true
   command: "setcap cap_ipc_lock=+ep {{ vault_bin_path }}/vault"
