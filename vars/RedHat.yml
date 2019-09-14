@@ -2,6 +2,5 @@
 # File: vars/RedHat.yml - Red Hat vars for Vault
 
 vault_os_packages:
-  - libselinux-python
   - git
   - unzip

@@ -66,6 +66,7 @@
     path: "{{ vault_bin_path }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
+    mode: "0755"
 
 - name: Check Vault mlock capability
   become: true
