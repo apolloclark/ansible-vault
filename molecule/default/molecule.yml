@@ -1,0 +1,44 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+# https://molecule.readthedocs.io/en/stable/configuration.html#docker
+platforms:
+  - name: ${PACKAGE:-package}-${DOCKER_INST_NAME_SUFFIX:-ubuntu_18.04}
+    image: ${DOCKER_IMAGE_BASE:-ubuntu:18.04}
+    capabilities:
+      - IPC_LOCK
+    volumes:
+      - /vault/file
+      - /vault/logs
+    exposed_ports:
+      - 8200/tcp
+    groups:
+      - ${PACKAGE:-package}
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      ${PACKAGE:-package}:
+        vault_version: ${PACKAGE_VERSION:-1.0.0}
+        vault_install_remotely: true
+        vault_backend: file
+        vault_config_path: /vault/config
+        vault_log_path: /vault/logs
+        vault_data_path: /vault/file
+        vault_user: vault
+        vault_group: vault
+  # https://molecule.readthedocs.io/en/stable/configuration.html#molecule.provisioner.lint.ansible_lint.AnsibleLint
+  lint:
+    name: ansible-lint
+    options:
+      # https://github.com/ansible/ansible-lint#excluding-rules
+      # https://docs.ansible.com/ansible-lint/rules/default_rules.html
+      x: ["305"]
+verifier:
+  name: goss
+  lint:
+    name: yamllint

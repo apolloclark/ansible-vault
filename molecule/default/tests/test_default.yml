@@ -1,0 +1,23 @@
+---
+service:
+  vault:
+    enabled: true
+    running: true
+
+group:
+  vault:
+    exists: true
+
+user:
+  vault:
+    exists: true
+    groups:
+    - vault
+
+command:
+  vault --version:
+    exit-status: 0
+    stderr: []
+    stdout:
+      - "{{ vault_version }}"
+    timeout: 10000

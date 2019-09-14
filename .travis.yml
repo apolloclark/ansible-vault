@@ -1,23 +1,52 @@
 ---
 language: python
-python: "2.7"
+python: "3.6"
+sudo: required
 
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+services:
+  - docker
 
 install:
-  # Install ansible
-  - pip install ansible
+  - pip install pipenv
+  - pipenv install -r test-requirements.txt --python 3.6
+env:
+  global:
+    - PACKAGE=vault
+    - PACKAGE_VERSION=1.2.3
+  matrix:
+    # Ubuntu 18.04 Bionic
+    - DOCKER_IMAGE_BASE=ubuntu:18.04
+      DOCKER_INST_NAME_SUFFIX=ubuntu_18.04
 
-  # Check ansible version
-  - ansible --version
+    # Ubuntu 16.04 Xenial/OpenJDK
+    - DOCKER_IMAGE_BASE=ubuntu:16.04
+      DOCKER_INST_NAME_SUFFIX=ubuntu_16.04
 
+    # Debian 10 Buster
+    - DOCKER_IMAGE_BASE=debian:10
+      DOCKER_INST_NAME_SUFFIX=debian_10
+
+    # Debian 9 Stretch
+    - DOCKER_IMAGE_BASE=debian:9
+      DOCKER_INST_NAME_SUFFIX=debian_9
+
+    # RHEL 8
+    - DOCKER_IMAGE_BASE=apolloclark/ubi8:8
+      DOCKER_INST_NAME_SUFFIX=rhel_8
+
+    # RHEL 7
+    - DOCKER_IMAGE_BASE=apolloclark/ubi7:7
+      DOCKER_INST_NAME_SUFFIX=rhel_7
+
+    # CentOS 7
+    - DOCKER_IMAGE_BASE=centos:7
+      DOCKER_INST_NAME_SUFFIX=centos_8
+
+    # Amazon Linux 2
+    - DOCKER_IMAGE_BASE=amazonlinux:2
+      DOCKER_INST_NAME_SUFFIX=amzlinux_8
 script:
-  # Basic role syntax check
-  - ANSIBLE_ROLES_PATH=.. ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+  - pipenv run molecule test --all
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
